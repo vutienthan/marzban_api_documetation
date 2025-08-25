@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marzban API Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0c111d; /* Darker background */
+            color: #d1d5db;
+        }
+        .method-get { background-color: #10b981; color: white; }
+        .method-post { background-color: #3b82f6; color: white; }
+        .method-put { background-color: #f97316; color: white; }
+        .method-delete { background-color: #ef4444; color: white; }
+        .nav-link {
+            transition: all 0.2s ease-in-out;
+            opacity: 0.7;
+        }
+        .nav-link:hover {
+            opacity: 1;
+            transform: translateX(4px);
+        }
+        .nav-link.active {
+            color: #60a5fa;
+            font-weight: 600;
+            border-left-color: #60a5fa;
+            opacity: 1;
+        }
+        .code-block {
+            background-color: #1f2937;
+            border: 1px solid #374151;
+            position: relative;
+            transition: box-shadow 0.3s ease;
+        }
+        .code-block:hover {
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: #374151;
+            color: #9ca3af;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 0.75rem;
+            opacity: 0.7;
+            transition: all 0.2s ease;
+        }
+        .copy-btn:hover {
+            background-color: #4b5563;
+            opacity: 1;
+        }
+        .copy-btn.copied {
+            background-color: #10b981;
+            color: white;
+            opacity: 1;
+        }
+        #back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #3b82f6;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 1000;
+        }
+        #back-to-top:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-300">
+
+    <div class="flex">
+        <!-- Sidebar Navigation -->
+        <aside class="hidden lg:block sticky top-0 h-screen w-64 text-gray-400 border-r border-gray-800 p-8">
+            <h2 class="font-bold text-xl text-white mb-6">Marzban API</h2>
+            <nav id="sidebar-nav" class="flex flex-col space-y-2">
+                <a href="#introduction" class="nav-link border-l-2 border-transparent pl-4 py-1">Introduction</a>
+                <a href="#authentication" class="nav-link border-l-2 border-transparent pl-4 py-1">Authentication</a>
+                <a href="#admin" class="nav-link border-l-2 border-transparent pl-4 py-1">Admin</a>
+                <a href="#core" class="nav-link border-l-2 border-transparent pl-4 py-1">Core</a>
+                <a href="#node" class="nav-link border-l-2 border-transparent pl-4 py-1">Node</a>
+                <a href="#subscription" class="nav-link border-l-2 border-transparent pl-4 py-1">Subscription</a>
+                <a href="#system" class="nav-link border-l-2 border-transparent pl-4 py-1">System</a>
+                <a href="#user-template" class="nav-link border-l-2 border-transparent pl-4 py-1">User Template</a>
+                <a href="#user" class="nav-link border-l-2 border-transparent pl-4 py-1">User</a>
+                <a href="#notes" class="nav-link border-l-2 border-transparent pl-4 py-1">Notes</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="w-full p-4 md:p-8 lg:p-12">
+            <div class="max-w-4xl mx-auto">
+                
+                <!-- Introduction Section -->
+                <section id="introduction" class="mb-16 scroll-mt-24 text-center">
+                    <h1 class="text-5xl font-bold text-white mb-4">Marzban API Documentation</h1>
+                    <p class="text-lg text-gray-400 mb-4">Unified GUI Censorship Resistant Solution Powered by Xray.</p>
+                    <div class="inline-block bg-blue-500/10 text-blue-300 text-sm font-semibold px-4 py-1 rounded-full">
+                        Version: 0.8.4
+                    </div>
+                    <div class="mt-8 border-t border-gray-800 pt-8 text-left">
+                        <p>This document summarizes the key endpoints and their usage to help developers integrate with Marzban. The API follows the OpenAPI 3.1 standard and is served at <a href="https://ghostline.site/docs" class="text-blue-400 hover:underline">https://ghostline.site/docs</a>.</p>
+                        <p class="mt-2">The full OpenAPI configuration file can be found at <a href="https://ghostline.site/openapi.json" class="text-blue-400 hover:underline">/openapi.json</a>.</p>
+                    </div>
+                </section>
+
+                <!-- Authentication Section -->
+                <section id="authentication" class="mb-16 scroll-mt-24">
+                    <h2 class="text-3xl font-bold text-white mb-6 border-b border-gray-700 pb-3 text-center">Authentication</h2>
+                    <p class="mb-4">The API uses OAuth2 Password Bearer for authentication. You must request a token by sending a POST request to <code class="text-sm bg-gray-800 p-1 rounded-md">/api/admin/token</code> with the following parameters in an <code class="text-sm bg-gray-800 p-1 rounded-md">application/x-www-form-urlencoded</code> body:</p>
+                    <ul class="list-disc list-inside mb-4 space-y-2 bg-gray-800/50 p-6 rounded-lg">
+                        <li><code class="text-sm bg-gray-700 p-1 rounded-md">grant_type</code>: 'password'</li>
+                        <li><code class="text-sm bg-gray-700 p-1 rounded-md">username</code>: Your admin username</li>
+                        <li><code class="text-sm bg-gray-700 p-1 rounded-md">password</code>: Your password</li>
+                    </ul>
+                    <p>If successful, the API returns a JSON object with the access token. Include this token in the header of subsequent requests:</p>
+                    <div class="code-block rounded-lg p-4 mt-2">
+                        <button class="copy-btn">Copy</button>
+                        <pre><code class="language-http">Authorization: Bearer &lt;your_token&gt;</code></pre>
+                    </div>
+                </section>
+
+                <!-- API Endpoint Sections -->
+                <div id="api-sections">
+                    
+                    <!-- Admin Section -->
+                    <section id="admin" class="api-section mb-12 scroll-mt-24">
+                        <h3 class="text-2xl font-bold text-white mb-6 text-center">Admin</h3>
+                        <div class="space-y-4">
+                            <div class="endpoint-item" data-path="/api/admin/token" data-method="POST" data-summary="Issue token for admin"></div>
+                            <div class="endpoint-item" data-path="/api/admin" data-method="GET" data-summary="Get current admin info"></div>
+                            <div class="endpoint-item" data-path="/api/admin" data-method="POST" data-summary="Create a new admin (sudo required)"></div>
+                            <div class="endpoint-item" data-path="/api/admin/{username}" data-method="PUT" data-summary="Modify a specific admin"></div>
+                            <div class="endpoint-item" data-path="/api/admin/{username}" data-method="DELETE" data-summary="Delete an admin from the system"></div>
+                            <div class="endpoint-item" data-path="/api/admins" data-method="GET" data-summary="List admins with pagination and filtering"></div>
+                            <div class="endpoint-item" data-path="/api/admin/{username}/users/disable" data-method="POST" data-summary="Disable all users of an admin"></div>
+                            <div class="endpoint-item" data-path="/api/admin/{username}/users/activate" data-method="POST" data-summary="Re-activate disabled users of an admin"></div>
+                            <div class="endpoint-item" data-path="/api/admin/usage/reset/{username}" data-method="POST" data-summary="Reset usage data for an admin"></div>
+                            <div class="endpoint-item" data-path="/api/admin/usage/{username}" data-method="GET" data-summary="Get usage statistics for an admin"></div>
+                        </div>
+                    </section>
+
+                    <!-- Core Section -->
+                    <section id="core" class="api-section mb-12 scroll-mt-24">
+                        <h3 class="text-2xl font-bold text-white mb-6 text-center">Core</h3>
+                        <div class="space-y-4">
+                            <div class="endpoint-item" data-path="/api/core" data-method="GET" data-summary="Get core statistics (version, uptime)"></div>
+                            <div class="endpoint-item" data-path="/api/core/restart" data-method="POST" data-summary="Restart the core and all nodes"></div>
+                            <div class="endpoint-item" data-path="/api/core/config" data-method="GET" data-summary="Get the current core configuration"></div>
+                            <div class="endpoint-item" data-path="/api/core/config" data-method="PUT" data-summary="Modify the core configuration and restart"></div>
+                        </div>
+                    </section>
+                    
+                    <!-- Node Section -->
+                    <section id="node" class="api-section mb-12 scroll-mt-24">
+                        <h3 class="text-2xl font-bold text-white mb-6 text-center">Node</h3>
+                        <div class="space-y-4">
+                             <div class="endpoint-item" data-path="/api/node/settings" data-method="GET" data-summary="Get node settings and TLS certificate"></div>
+                             <div class="endpoint-item" data-path="/api/node" data-method="POST" data-summary="Add a new node to the database"></div>
+                             <div class="endpoint-item" data-path="/api/node/{node_id}" data-method="GET" data-summary="Get node details by ID"></div>
+                             <div class="endpoint-item" data-path="/api/node/{node_id}" data-method="PUT" data-summary="Update a node (sudo only)"></div>
+                             <div class="endpoint-item" data-path="/api/node/{node_id}" data-method="DELETE" data-summary="Remove a node from the database and Xray"></div>
+                             <div class="endpoint-item" data-path="/api/nodes" data-method="GET" data-summary="List all nodes (sudo only)"></div>
+                             <div class="endpoint-item" data-path="/api/node/{node_id}/reconnect" data-method="POST" data-summary="Reconnect a node (sudo)"></div>
+                             <div class="endpoint-item" data-path="/api/nodes/usage" data-method="GET" data-summary="Get node traffic statistics for a time range"></div>
+                        </div>
+                    </section>
+
+                    <!-- Subscription Section -->
+                    <section id="subscription" class="api-section mb-12 scroll-mt-24">
+                        <h3 class="text-2xl font-bold text-white mb-6 text-center">Subscription</h3>
+                        <div class="space-y-4">
+                            <div class="endpoint-item" data-path="/sub/{token}/" data-method="GET" data-summary="Provide subscription link based on user agent"></div>
+                            <div class="endpoint-item" data-path="/sub/{token}/info" data-method="GET" data-summary="Get detailed subscription information"></div>
+                            <div class="endpoint-item" data-path="/sub/{token}/usage" data-method="GET" data-summary="Get user usage statistics (by time range)"></div>
+                            <div class="endpoint-item" data-path="/sub/{token}/{client_type}" data-method="GET" data-summary="Subscription link for a specific client (clash, v2ray, etc.)"></div>
+                        </div>
+                    </section>
+
+                    <!-- System Section -->
+                    <section id="system" class="api-section mb-12 scroll-mt-24">
+                        <h3 class="text-2xl font-bold text-white mb-6 text-center">System</h3>
+                        <div class="space-y-4">
+                             <div class="endpoint-item" data-path="/api/system" data-method="GET" data-summary="Get system statistics (CPU, RAM, users)"></div>
+                             <div class="endpoint-item" data-path="/api/inbounds" data-method="GET" data-summary="Get inbound configurations by protocol"></div>
+                             <div class="endpoint-item" data-path="/api/hosts" data-method="GET" data-summary="Get list of proxy hosts by inbound tag"></div>
+                             <div class="endpoint-item" data-path="/api/hosts" data-method="PUT" data-summary="Update proxy host configuration"></div>
+                        </div>
+                    </section>
+
+                    <!-- User Template Section -->
+                    <section id="user-template" class="api-section mb-12 scroll-mt-24">
+                        <h3 class="text-2xl font-bold text-white mb-6 text-center">User Template</h3>
+                        <div class="space-y-4">
+                             <div class="endpoint-item" data-path="/api/user_template" data-method="POST" data-summary="Add a new user template"></div>
+                             <div class="endpoint-item" data-path="/api/user_template" data-method="GET" data-summary="List user templates (with pagination)"></div>
+                             <div class="endpoint-item" data-path="/api/user_template/{template_id}" data-method="GET" data-summary="Get user template information by ID"></div>
+                             <div class="endpoint-item" data-path="/api/user_template/{template_id}" data-method="PUT" data-summary="Modify a user template"></div>
+                             <div class="endpoint-item" data-path="/api/user_template/{template_id}" data-method="DELETE" data-summary="Delete a user template"></div>
+                        </div>
+                    </section>
+
+                    <!-- User Section -->
+                    <section id="user" class="api-section mb-12 scroll-mt-24">
+                        <h3 class="text-2xl font-bold text-white mb-6 text-center">User</h3>
+                        <div class="space-y-4">
+                            <div class="endpoint-item" data-path="/api/user" data-method="POST" data-summary="Create a new user with multiple attributes"></div>
+                            <div class="endpoint-item" data-path="/api/user/{username}" data-method="GET" data-summary="Get user information"></div>
+                            <div class="endpoint-item" data-path="/api/user/{username}" data-method="PUT" data-summary="Modify user information"></div>
+                            <div class="endpoint-item" data-path="/api/user/{username}" data-method="DELETE" data-summary="Delete a user"></div>
+                            <div class="endpoint-item" data-path="/api/user/{username}/reset" data-method="POST" data-summary="Reset a user's traffic usage"></div>
+                            <div class="endpoint-item" data-path="/api/user/{username}/revoke_sub" data-method="POST" data-summary="Revoke a user's subscription link and proxies"></div>
+                            <div class="endpoint-item" data-path="/api/users" data-method="GET" data-summary="List users with various filters and pagination"></div>
+                            <div class="endpoint-item" data-path="/api/users/reset" data-method="POST" data-summary="Reset traffic for all users"></div>
+                            <div class="endpoint-item" data-path="/api/user/{username}/usage" data-method="GET" data-summary="Get user usage statistics for a time range"></div>
+                            <div class="endpoint-item" data-path="/api/user/{username}/active-next" data-method="POST" data-summary="Activate the next plan for a user"></div>
+                            <div class="endpoint-item" data-path="/api/users/usage" data-method="GET" data-summary="Get traffic statistics for all users"></div>
+                            <div class="endpoint-item" data-path="/api/user/{username}/set-owner" data-method="PUT" data-summary="Transfer user ownership to another admin"></div>
+                            <div class="endpoint-item" data-path="/api/users/expired" data-method="GET" data-summary="Get a list of expired users by time range"></div>
+                            <div class="endpoint-item" data-path="/api/users/expired" data-method="DELETE" data-summary="Delete expired users within a time range"></div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Notes Section -->
+                <section id="notes" class="mb-16 scroll-mt-24">
+                    <h2 class="text-3xl font-bold text-white mb-6 border-b border-gray-700 pb-3 text-center">Important Notes</h2>
+                    <ul class="list-disc list-inside space-y-4 bg-gray-800/50 p-6 rounded-lg">
+                        <li>
+                            <strong>Sudo Permissions:</strong> Certain actions require the administrator to have <code class="text-sm bg-gray-700 p-1 rounded-md">is_sudo: true</code> permissions. Always check this attribute before making such API calls.
+                        </li>
+                        <li>
+                            <strong>Error Handling:</strong> The API returns standard HTTP error codes and a JSON body with details for errors. Always check the status code and response body to handle errors gracefully.
+                        </li>
+                        <li>
+                            <strong>Date Formatting:</strong> Parameters like <code class="text-sm bg-gray-700 p-1 rounded-md">start</code>, <code class="text-sm bg-gray-700 p-1 rounded-md">end</code>, etc., use the ISO 8601 format (e.g., <code class="text-sm bg-gray-700 p-1 rounded-md">2025-01-01T00:00:00</code>).
+                        </li>
+                        <li>
+                            <strong>Username Constraints:</strong> Usernames must be 3-32 characters long and can only contain lowercase letters (a-z), numbers (0-9), and underscores (_).
+                        </li>
+                    </ul>
+                </section>
+                
+                <footer class="text-center text-gray-500 border-t border-gray-800 pt-8 mt-12">
+                    <p>Documentation based on Ghostline's Marzban API.</p>
+                </footer>
+            </div>
+        </main>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" title="Go to top">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+        </svg>
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Dynamically create endpoint HTML elements ---
+            const endpointContainer = document.getElementById('api-sections');
+            const endpointItems = endpointContainer.querySelectorAll('.endpoint-item');
+
+            endpointItems.forEach(item => {
+                const path = item.dataset.path;
+                const method = item.dataset.method;
+                const summary = item.dataset.summary;
+
+                const methodClass = `method-${method.toLowerCase()}`;
+
+                const html = `
+                    <div class="code-block rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div class="flex items-center gap-4 flex-wrap">
+                            <span class="font-semibold text-xs uppercase px-3 py-1 rounded-md ${methodClass}">${method}</span>
+                            <code class="text-sm md:text-base text-green-400">${path}</code>
+                        </div>
+                        <p class="text-gray-400 text-sm md:text-right flex-shrink-0">${summary}</p>
+                    </div>
+                `;
+                item.innerHTML = html;
+            });
+
+            // --- Copy to clipboard functionality ---
+            document.querySelectorAll('.copy-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const codeBlock = button.closest('.code-block');
+                    const code = codeBlock.querySelector('code').innerText;
+                    
+                    const textarea = document.createElement('textarea');
+                    textarea.value = code;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    try {
+                        document.execCommand('copy');
+                        button.textContent = 'Copied!';
+                        button.classList.add('copied');
+                        setTimeout(() => {
+                            button.textContent = 'Copy';
+                            button.classList.remove('copied');
+                        }, 2000);
+                    } catch (err) {
+                        console.error('Failed to copy text: ', err);
+                    }
+                    document.body.removeChild(textarea);
+                });
+            });
+
+            // --- Sidebar navigation active state on scroll ---
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('#sidebar-nav a');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.toggle('active', link.getAttribute('href').substring(1) === entry.target.id);
+                        });
+                    }
+                });
+            }, { rootMargin: "-50% 0px -50% 0px" });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            // --- Back to Top Button Logic ---
+            const backToTopButton = document.getElementById('back-to-top');
+            
+            window.onscroll = function() {
+                if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                    backToTopButton.style.display = "flex";
+                } else {
+                    backToTopButton.style.display = "none";
+                }
+            };
+
+            backToTopButton.addEventListener('click', function() {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+
+</body>
+</html>
